@@ -1,0 +1,29 @@
+{
+  "name": "vineyard-test-suite",
+  "version": "0.0.0",
+  "description": "Test suite for main vineyard bulbs",
+  "main": "run.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/silentorb/vineyard-test-suite.git"
+  },
+  "author": "Christopher W. Johnson",
+  "license": "MIT",
+  "dependencies": {
+    "when": "~3.1.0",
+    "source-map-support": "~0.2.5"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.4",
+    "grunt-ts": "~1.10.0",
+    "buster": "~0.7.11",
+    "socket.io-client": "~0.9.16",
+    "grunt-contrib-watch": "~0.6.1",
+    "grunt-contrib-copy": "~0.5.0",
+    "grunt-text-replace": "~0.3.11",
+    "grunt-hub": "~0.6.2"
+  }
+}

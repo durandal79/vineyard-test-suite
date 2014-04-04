@@ -1,0 +1,37 @@
+{
+  "ground": {
+    "databases": {
+      "local": {
+        "host": "localhost",
+        "user": "root",
+        "password": "",
+        "database": "vineyard_test",
+        "supportBigNumbers": true
+      }
+    },
+    "trellis_files": [
+      "node_modules/lawn/schema/common.json",
+      "config/schema/site.json"
+    ],
+    "default_query_expansions": "none"
+  },
+  "bulbs": {
+    "fortress": {
+      "config_path": "config/fortress.json"
+    },
+    "lawn": {
+      "cookie_secret": "lawn1234",
+      "ports": {
+        "http": 3000,
+        "websocket": 8086
+      },
+      "admin": {
+        "id": 7
+      }
+    },
+    "songbird": {
+      "parent": "lawn",
+      "class": "Songbird"
+    }
+  }
+}

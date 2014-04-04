@@ -1,0 +1,11 @@
+{
+  "gates": [
+    {
+      "type": "admin",
+      "roles": ["admin"],
+      "on": [
+        "all"
+      ]
+    }
+  ]
+}
