@@ -1,11 +1,8 @@
 {
   "name": "vineyard-test-suite",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Test suite for main vineyard bulbs",
   "main": "run.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/silentorb/vineyard-test-suite.git"

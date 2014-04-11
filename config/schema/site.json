@@ -3,6 +3,21 @@
 
   },
   "trellises": {
-
+    "character": {
+      "parent": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "is_alive": {
+          "type": "bool",
+          "default": true
+        },
+        "all": {
+          "type": "string",
+          "is_virtual": true
+        }
+      }
+    }
   }
 }

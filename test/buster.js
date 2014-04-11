@@ -8,7 +8,7 @@ config["Vineyard tests"] = {
 //        "lib/**/*.js"      // Glob patterns supported
     ],
     tests: [
-        "test/tests/*-test.js"
+        "test/**/*-test.js"
     ]
 };
 
