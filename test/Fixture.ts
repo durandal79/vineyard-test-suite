@@ -66,5 +66,20 @@ export class Fixture extends PlantLab.Fixture {
     insert({id: 6, name: "The Raven"}, this.users['froggy'])
 
     return pipeline(inserts)
+      .then(()=> this.populate_items())
   }
+
+  populate_items():Promise {
+    var inserts = []
+
+    var insert = (data, user)=> inserts.push(()=> this.ground.insert_object('item', data, user))
+
+    insert({id: 21, name: "knife", owner: 1 }, this.users['cj'])
+    insert({id: 22, name: "book of fairytales", owner: 1 }, this.users['cj'])
+    insert({id: 23, name: "shotgun", owner: 2 }, this.users['cj'])
+
+    return pipeline(inserts)
+  }
+
+
 }

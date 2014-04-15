@@ -79,6 +79,25 @@ var Fixture = (function (_super) {
         insert({ id: 5, name: "Mr. Mosspuddle" }, this.users['froggy']);
         insert({ id: 6, name: "The Raven" }, this.users['froggy']);
 
+        return pipeline(inserts).then(function () {
+            return _this.populate_items();
+        });
+    };
+
+    Fixture.prototype.populate_items = function () {
+        var _this = this;
+        var inserts = [];
+
+        var insert = function (data, user) {
+            return inserts.push(function () {
+                return _this.ground.insert_object('item', data, user);
+            });
+        };
+
+        insert({ id: 21, name: "knife", owner: 1 }, this.users['cj']);
+        insert({ id: 22, name: "book of fairytales", owner: 1 }, this.users['cj']);
+        insert({ id: 23, name: "shotgun", owner: 2 }, this.users['cj']);
+
         return pipeline(inserts);
     };
     return Fixture;

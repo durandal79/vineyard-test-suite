@@ -16,6 +16,19 @@
         "all": {
           "type": "string",
           "is_virtual": true
+        },
+        "items": {
+          "type": "list",
+          "trellis": "item"
+        }
+      }
+    },
+    "item": {
+      "parent": "object",
+      "properties": {
+        "owner": {
+          "type": "reference",
+          "trellis": "character"
         }
       }
     }

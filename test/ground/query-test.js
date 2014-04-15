@@ -2,26 +2,27 @@ var buster = require("buster");
 var assert = buster.referee.assert;
 var when = require("when");
 var PlantLab = require('vineyard-plantlab');
-process.chdir('..');
+
 var lab = new PlantLab('config/server.json', ['lawn', 'fortress']);
 var ground = lab.ground;
 var Fixture = require('../Fixture.js');
 var fixture = new Fixture.Fixture(lab);
+ground.log_queries = true;
+
+var Lawn = require('vineyard-lawn');
+var Irrigation = Lawn.Irrigation;
 
 lab.test("Query test", {
     setUp: function () {
-        this.timeout = 5000;
+        this.timeout = 8000;
 
         return fixture.prepare_database().then(function () {
-            return lab.start();
-        }).then(function () {
             return fixture.populate();
         }).then(function () {
             return fixture.populate_characters();
         });
     },
     tearDown: function () {
-        return lab.stop();
     },
     "multiple filters": function () {
         var socket;
@@ -38,11 +39,8 @@ lab.test("Query test", {
                 }
             ]
         };
-        return lab.login_socket('cj', 'pass').then(function (s) {
-            return socket = s;
-        }).then(function () {
-            return lab.emit(socket, 'query', query);
-        }).then(function (response) {
+
+        return Irrigation.query(query, fixture.users['cj'], ground, lab.vineyard).then(function (response) {
             var objects = response.objects;
             console.log('objects', objects);
             assert.equals(objects.length, 1);
