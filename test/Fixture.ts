@@ -43,14 +43,45 @@ export class Fixture extends PlantLab.Fixture {
 
     var inserts = users.map((user)=> this.insert_object('user', user))
 
+    var admin = {
+      id: 1,
+      name: 'admin'
+    }
+
+    var member = {
+      id: 2,
+      name: 'member'
+    }
+
     inserts.push(this.insert_object('role', {id: 1, name: "admin"}))
-    inserts.push(this.ground.db.query("INSERT INTO roles_users (role, user) VALUES (1, 7)"))
+//    inserts.push(this.ground.db.query("INSERT INTO roles_users (role, user) VALUES (1, 7)"))
+    inserts.push(this.add_role('cj', admin))
 
     inserts.push(this.insert_object('role', {id: 2, name: "member"}))
-    inserts.push(this.ground.db.query("INSERT INTO roles_users (role, user) VALUES (2, 9)"))
-    inserts.push(this.ground.db.query("INSERT INTO roles_users (role, user) VALUES (2, 12)"))
+    inserts.push(this.add_role('froggy', member))
+    inserts.push(this.add_role('hero', member))
+//    inserts.push(this.ground.db.query("INSERT INTO roles_users (role, user) VALUES (2, 12)"))
+//    inserts.push(this.ground.db.query("INSERT INTO roles_users (role, user) VALUES (2, 9)"))
 
     return when.all(inserts)
+  }
+
+  add_role(user_name, role):Promise {
+    var user = this.users[user_name]
+    user.roles = user.roles || []
+    user.roles.push(role)
+    return this.ground.db.query("INSERT INTO roles_users (role, user) VALUES (?, ?)", [role.id, user.id])
+  }
+
+  populate_tags():Promise {
+    var tags = [
+      'male',
+      'female',
+      'zombie',
+      'human'
+    ]
+    var inserts = tags.map((tag)=> ()=> this.ground.insert_object('tag', {name: tag }, this.users['cj']))
+    return pipeline(inserts)
   }
 
   populate_characters():Promise {
@@ -58,25 +89,26 @@ export class Fixture extends PlantLab.Fixture {
 
     var insert = (data, user)=> inserts.push(()=> this.ground.insert_object('character', data, user))
 
-    insert({id: 1, name: "James", tags: [ "male", "zombie" ], is_alive: false }, this.users['cj'])
-    insert({id: 2, name: "Fugue", description: "James' sidekick.", tags: [ "male" ]}, this.users['cj'])
-    insert({id: 3, name: "Adelle"}, this.users['cj'])
-    insert({id: 4, name: "Adelle", "version": 2}, this.users['cj'])
-    insert({id: 5, name: "Mr. Mosspuddle"}, this.users['froggy'])
-    insert({id: 6, name: "The Raven"}, this.users['froggy'])
+    insert({id: 1, name: "James", tags: [ 1, 3 ], is_alive: false }, this.users['cj'])
+    insert({id: 2, name: "Fugue", description: "James' sidekick.", tags: [ 1 ]}, this.users['cj'])
+    insert({id: 3, name: "Adelle", tags: [ 2 ]}, this.users['cj'])
+    insert({id: 4, name: "Mr. Mosspuddle"}, this.users['froggy'])
+    insert({id: 5, name: "The Raven"}, this.users['froggy'])
 
-    return pipeline(inserts)
+    return this.populate_tags()
+      .then(()=> pipeline(inserts))
       .then(()=> this.populate_items())
   }
 
   populate_items():Promise {
     var inserts = []
 
-    var insert = (data, user)=> inserts.push(()=> this.ground.insert_object('item', data, user))
+    var insert = (data)=> inserts.push(()=> this.ground.insert_object('item', data, this.users['cj']))
 
-    insert({id: 21, name: "knife", owner: 1 }, this.users['cj'])
-    insert({id: 22, name: "book of fairytales", owner: 1 }, this.users['cj'])
-    insert({id: 23, name: "shotgun", owner: 2 }, this.users['cj'])
+    insert({id: 21, name: "knife", owner: 1 })
+    insert({id: 22, name: "book of fairytales", owner: 1 })
+    insert({id: 23, name: "shotgun", owner: 2 })
+    insert({id: 24, name: "crown", owner: 3 })
 
     return pipeline(inserts)
   }

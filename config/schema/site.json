@@ -1,8 +1,26 @@
 {
   "tables": {
-
+    "objects_tags": {
+      "primary_keys": [ "object", "tag" ],
+      "properties": {
+        "object": {
+          "type": "int"
+        },
+        "tag": {
+          "type": "int"
+        }
+      }
+    }
   },
   "trellises": {
+    "object": {
+      "properties": {
+        "tags": {
+          "type": "list",
+          "trellis": "tag"
+        }
+      }
+    },
     "character": {
       "parent": "object",
       "properties": {
@@ -29,6 +47,20 @@
         "owner": {
           "type": "reference",
           "trellis": "character"
+        }
+      }
+    },
+    "tag": {
+      "properties": {
+        "id": {
+          "type": "int"
+        },
+        "name": {
+          "type": "string"
+        },
+        "objects": {
+          "type": "list",
+          "trellis": "object"
         }
       }
     }

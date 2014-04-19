@@ -52,14 +52,48 @@ var Fixture = (function (_super) {
             return _this.insert_object('user', user);
         });
 
+        var admin = {
+            id: 1,
+            name: 'admin'
+        };
+
+        var member = {
+            id: 2,
+            name: 'member'
+        };
+
         inserts.push(this.insert_object('role', { id: 1, name: "admin" }));
-        inserts.push(this.ground.db.query("INSERT INTO roles_users (role, user) VALUES (1, 7)"));
+
+        inserts.push(this.add_role('cj', admin));
 
         inserts.push(this.insert_object('role', { id: 2, name: "member" }));
-        inserts.push(this.ground.db.query("INSERT INTO roles_users (role, user) VALUES (2, 9)"));
-        inserts.push(this.ground.db.query("INSERT INTO roles_users (role, user) VALUES (2, 12)"));
+        inserts.push(this.add_role('froggy', member));
+        inserts.push(this.add_role('hero', member));
 
         return when.all(inserts);
+    };
+
+    Fixture.prototype.add_role = function (user_name, role) {
+        var user = this.users[user_name];
+        user.roles = user.roles || [];
+        user.roles.push(role);
+        return this.ground.db.query("INSERT INTO roles_users (role, user) VALUES (?, ?)", [role.id, user.id]);
+    };
+
+    Fixture.prototype.populate_tags = function () {
+        var _this = this;
+        var tags = [
+            'male',
+            'female',
+            'zombie',
+            'human'
+        ];
+        var inserts = tags.map(function (tag) {
+            return function () {
+                return _this.ground.insert_object('tag', { name: tag }, _this.users['cj']);
+            };
+        });
+        return pipeline(inserts);
     };
 
     Fixture.prototype.populate_characters = function () {
@@ -72,14 +106,15 @@ var Fixture = (function (_super) {
             });
         };
 
-        insert({ id: 1, name: "James", tags: ["male", "zombie"], is_alive: false }, this.users['cj']);
-        insert({ id: 2, name: "Fugue", description: "James' sidekick.", tags: ["male"] }, this.users['cj']);
-        insert({ id: 3, name: "Adelle" }, this.users['cj']);
-        insert({ id: 4, name: "Adelle", "version": 2 }, this.users['cj']);
-        insert({ id: 5, name: "Mr. Mosspuddle" }, this.users['froggy']);
-        insert({ id: 6, name: "The Raven" }, this.users['froggy']);
+        insert({ id: 1, name: "James", tags: [1, 3], is_alive: false }, this.users['cj']);
+        insert({ id: 2, name: "Fugue", description: "James' sidekick.", tags: [1] }, this.users['cj']);
+        insert({ id: 3, name: "Adelle", tags: [2] }, this.users['cj']);
+        insert({ id: 4, name: "Mr. Mosspuddle" }, this.users['froggy']);
+        insert({ id: 5, name: "The Raven" }, this.users['froggy']);
 
-        return pipeline(inserts).then(function () {
+        return this.populate_tags().then(function () {
+            return pipeline(inserts);
+        }).then(function () {
             return _this.populate_items();
         });
     };
@@ -88,15 +123,16 @@ var Fixture = (function (_super) {
         var _this = this;
         var inserts = [];
 
-        var insert = function (data, user) {
+        var insert = function (data) {
             return inserts.push(function () {
-                return _this.ground.insert_object('item', data, user);
+                return _this.ground.insert_object('item', data, _this.users['cj']);
             });
         };
 
-        insert({ id: 21, name: "knife", owner: 1 }, this.users['cj']);
-        insert({ id: 22, name: "book of fairytales", owner: 1 }, this.users['cj']);
-        insert({ id: 23, name: "shotgun", owner: 2 }, this.users['cj']);
+        insert({ id: 21, name: "knife", owner: 1 });
+        insert({ id: 22, name: "book of fairytales", owner: 1 });
+        insert({ id: 23, name: "shotgun", owner: 2 });
+        insert({ id: 24, name: "crown", owner: 3 });
 
         return pipeline(inserts);
     };
