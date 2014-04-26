@@ -63,12 +63,12 @@ var Fixture = (function (_super) {
         };
 
         inserts.push(this.insert_object('role', { id: 1, name: "admin" }));
-
         inserts.push(this.add_role('cj', admin));
 
         inserts.push(this.insert_object('role', { id: 2, name: "member" }));
         inserts.push(this.add_role('froggy', member));
         inserts.push(this.add_role('hero', member));
+        inserts.push(this.ground.db.query("INSERT INTO user_follows (follower, followee) VALUES (9, 7)"));
 
         return when.all(inserts);
     };
@@ -86,7 +86,8 @@ var Fixture = (function (_super) {
             'male',
             'female',
             'zombie',
-            'human'
+            'human',
+            'bird'
         ];
         var inserts = tags.map(function (tag) {
             return function () {
@@ -110,7 +111,7 @@ var Fixture = (function (_super) {
         insert({ id: 2, name: "Fugue", description: "James' sidekick.", tags: [1] }, this.users['cj']);
         insert({ id: 3, name: "Adelle", tags: [2] }, this.users['cj']);
         insert({ id: 4, name: "Mr. Mosspuddle" }, this.users['froggy']);
-        insert({ id: 5, name: "The Raven" }, this.users['froggy']);
+        insert({ id: 5, name: "The Raven", additional_tags: [4] }, this.users['froggy']);
 
         return this.populate_tags().then(function () {
             return pipeline(inserts);

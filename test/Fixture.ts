@@ -54,12 +54,12 @@ export class Fixture extends PlantLab.Fixture {
     }
 
     inserts.push(this.insert_object('role', {id: 1, name: "admin"}))
-//    inserts.push(this.ground.db.query("INSERT INTO roles_users (role, user) VALUES (1, 7)"))
     inserts.push(this.add_role('cj', admin))
 
     inserts.push(this.insert_object('role', {id: 2, name: "member"}))
     inserts.push(this.add_role('froggy', member))
     inserts.push(this.add_role('hero', member))
+    inserts.push(this.ground.db.query("INSERT INTO user_follows (follower, followee) VALUES (9, 7)"))
 //    inserts.push(this.ground.db.query("INSERT INTO roles_users (role, user) VALUES (2, 12)"))
 //    inserts.push(this.ground.db.query("INSERT INTO roles_users (role, user) VALUES (2, 9)"))
 
@@ -78,7 +78,8 @@ export class Fixture extends PlantLab.Fixture {
       'male',
       'female',
       'zombie',
-      'human'
+      'human',
+      'bird'
     ]
     var inserts = tags.map((tag)=> ()=> this.ground.insert_object('tag', {name: tag }, this.users['cj']))
     return pipeline(inserts)
@@ -93,7 +94,7 @@ export class Fixture extends PlantLab.Fixture {
     insert({id: 2, name: "Fugue", description: "James' sidekick.", tags: [ 1 ]}, this.users['cj'])
     insert({id: 3, name: "Adelle", tags: [ 2 ]}, this.users['cj'])
     insert({id: 4, name: "Mr. Mosspuddle"}, this.users['froggy'])
-    insert({id: 5, name: "The Raven"}, this.users['froggy'])
+    insert({id: 5, name: "The Raven", additional_tags: [ 4 ]}, this.users['froggy'])
 
     return this.populate_tags()
       .then(()=> pipeline(inserts))

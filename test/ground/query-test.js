@@ -16,7 +16,7 @@ var Ground = require('vineyard-ground');
 
 lab.test("Query test", {
     setUp: function () {
-        this.timeout = 5000;
+        this.timeout = 7000;
 
         return fixture.prepare_database().then(function () {
             return fixture.populate();
@@ -95,6 +95,14 @@ lab.test("Query test", {
             assert.equals(objects[0].owner.name, 'James');
         });
     },
+    "immediate cross-table query": function () {
+        var query = ground.create_query('user');
+        query.add_key_filter(7);
+        query.add_subquery('roles');
+        return query.run_single().then(function (user) {
+            assert(user.name, 'cj');
+        });
+    },
     "filter paths": function () {
         var query = {
             "trellis": "item",
@@ -129,6 +137,87 @@ lab.test("Query test", {
             assert.equals(objects.length, 2);
             assert.equals(objects[0].owner, 1);
             assert.equals(objects[1].owner, 1);
+        });
+    },
+    "circular cross table": function () {
+        var query = {
+            "trellis": "user",
+            "expansions": ["followers"],
+            "filters": [
+                {
+                    "path": "id",
+                    "value": 7
+                }
+            ]
+        };
+
+        return Irrigation.query(query, fixture.users['cj'], ground, lab.vineyard).then(function (response) {
+            var objects = response.objects;
+
+            assert.equals(objects.length, 1);
+            assert.equals(objects[0].followers.length, 1);
+            assert.equals(objects[0].followers[0].name, "froggy");
+        });
+    },
+    "like": function () {
+        var query = {
+            "trellis": "user",
+            "filters": [
+                {
+                    "path": "name",
+                    "operator": "LIKE",
+                    "value": "rog"
+                }
+            ]
+        };
+
+        return Irrigation.query(query, fixture.users['cj'], ground, lab.vineyard).then(function (response) {
+            var objects = response.objects;
+
+            assert.equals(objects.length, 1);
+            assert.equals(objects[0].name, "froggy");
+        });
+    },
+    "guids": function () {
+        var guid = "2382e725-7fb9-4077-9c84-2ad709aa437d";
+        var message = {
+            "guid": guid,
+            "text": "The System is not down."
+        };
+        var query = {
+            "trellis": "message",
+            "filters": [
+                {
+                    "path": "guid",
+                    "value": guid
+                }
+            ]
+        };
+
+        return ground.insert_object('message', message).then(function () {
+            return Irrigation.query(query, fixture.users['cj'], ground, lab.vineyard);
+        }).then(function (response) {
+            var objects = response.objects;
+            console.log('response', response);
+            assert.equals(objects.length, 1);
+            assert.equals(objects[0].text, message.text);
+        });
+    },
+    "=>multiple cross-tables": function () {
+        var query = {
+            "trellis": "character",
+            "filters": [
+                {
+                    "path": "additional_tags",
+                    "value": 4
+                }
+            ]
+        };
+
+        return Irrigation.query(query, fixture.users['cj'], ground, lab.vineyard).then(function (response) {
+            var objects = response.objects;
+            console.log('response', response);
+            assert.equals(objects.length, 1);
         });
     }
 });
