@@ -2,7 +2,6 @@ var buster = require("buster");
 var assert = buster.referee.assert;
 var when = require("when");
 var PlantLab = require('vineyard-plantlab');
-process.chdir('..');
 var lab = new PlantLab('config/server.json', ['lawn', 'fortress']);
 var ground = lab.ground;
 var Fixture = require('../Fixture.js');
@@ -203,7 +202,7 @@ lab.test("Query test", {
             assert.equals(objects[0].text, message.text);
         });
     },
-    "=>multiple cross-tables": function () {
+    "multiple cross-tables": function () {
         var query = {
             "trellis": "character",
             "filters": [
@@ -218,6 +217,91 @@ lab.test("Query test", {
             var objects = response.objects;
             console.log('response', response);
             assert.equals(objects.length, 1);
+        });
+    },
+    "map and union": function () {
+        var query = {
+            "trellis": "user",
+            "map": {
+                "is_alive": {
+                    "type": "literal",
+                    "value": true
+                },
+                "type": {
+                    "type": "literal",
+                    "value": 'user'
+                },
+                "username": {}
+            },
+            "filters": [
+                {
+                    "path": "id",
+                    "value": 9
+                }
+            ]
+        };
+        var query2 = {
+            "type": "union",
+            "trellis": "user",
+            "queries": [
+                {
+                    "trellis": "user",
+                    "map": {
+                        "is_alive": {
+                            "type": "literal",
+                            "value": true
+                        },
+                        "type": {
+                            "type": "literal",
+                            "value": "user"
+                        },
+                        "username": {
+                            "type": "reference",
+                            "path": "name"
+                        }
+                    }
+                },
+                {
+                    "trellis": "character",
+                    "map": {
+                        "is_alive": {},
+                        "type": {},
+                        "username": {
+                            "type": "reference",
+                            "path": "name"
+                        }
+                    },
+                    "expansions": ["items"]
+                }
+            ],
+            "sorts": [
+                {
+                    "property": "username"
+                }
+            ]
+        };
+
+        return Irrigation.query(query, fixture.users['cj'], ground, lab.vineyard).then(function (response) {
+            var objects = response.objects;
+            console.log('response', response);
+            var user = objects[0];
+            assert.equals(objects.length, 1);
+            assert.equals(Object.keys(user).length, 4);
+            assert.equals(user.id, 9);
+            assert.equals(user.username, 'froggy');
+            assert.same(user.is_alive, true);
+        }).then(function () {
+            return Irrigation.query(query2, fixture.users['cj'], ground, lab.vineyard);
+        }).then(function (response) {
+            var objects = response.objects;
+            console.log('response', response);
+            var user = objects[0];
+            assert.equals(objects.length, 9);
+            assert.equals(objects[0].username, 'Adelle');
+            assert.equals(objects[6].items.length, 2);
+            assert.equals(objects[1].username, 'anonymous');
+            assert.equals(objects[8].username, 'The Raven');
+            console.log('items', objects[6].items);
         });
     }
 });

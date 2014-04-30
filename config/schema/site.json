@@ -134,6 +134,24 @@
           "type": "string"
         }
       }
+    },
+    "union_test": {
+      "primary_key": "id",
+      "is_virtual": true,
+      "properties": {
+        "id": {
+          "type": "int"
+        },
+        "username": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "is_alive": {
+          "type": "bool"
+        }
+      }
     }
   }
 }

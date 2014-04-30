@@ -4,7 +4,6 @@ var buster = require("buster");
 var assert = buster.referee.assert;
 var when = require("when")
 import PlantLab = require('vineyard-plantlab')
-process.chdir('..')
 var lab = new PlantLab('config/server.json', ['lawn', 'fortress'])
 var ground = lab.ground
 var Fixture = require('../Fixture.js')

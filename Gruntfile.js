@@ -11,6 +11,7 @@ module.exports = function (grunt) {
         },
         src: [
           'node_modules/vineyard-metahub/Gruntfile.js',
+          'node_modules/metahub3/Gruntfile.js',
           'node_modules/vineyard-ground/Gruntfile.js',
           'node_modules/vineyard/Gruntfile.js',
           'node_modules/vineyard-lawn/Gruntfile.js',
