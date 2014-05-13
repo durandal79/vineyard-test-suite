@@ -92,7 +92,7 @@ export class Fixture extends PlantLab.Fixture {
 
     insert({id: 1, name: "James", tags: [ 1, 3 ], is_alive: false }, this.users['cj'])
     insert({id: 2, name: "Fugue", description: "James' sidekick.", tags: [ 1 ]}, this.users['cj'])
-    insert({id: 3, name: "Adelle", tags: [ 2 ]}, this.users['cj'])
+    insert({id: 3, name: "Adelle", tags: [ 2 ], author: 7}, this.users['cj'])
     insert({id: 4, name: "Mr. Mosspuddle"}, this.users['froggy'])
     insert({id: 5, name: "The Raven", additional_tags: [ 4 ]}, this.users['froggy'])
 

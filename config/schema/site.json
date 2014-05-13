@@ -98,6 +98,10 @@
         "additional_tags": {
           "type": "list",
           "trellis": "tag"
+        },
+        "author": {
+          "type": "reference",
+          "trellis": "user"
         }
       }
     },

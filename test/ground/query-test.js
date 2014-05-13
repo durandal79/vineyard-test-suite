@@ -219,7 +219,7 @@ lab.test("Query test", {
             assert.equals(objects.length, 1);
         });
     },
-    "map and union": function () {
+    "=>map and union": function () {
         var query = {
             "trellis": "user",
             "map": {
@@ -258,27 +258,35 @@ lab.test("Query test", {
                         "username": {
                             "type": "reference",
                             "path": "name"
+                        },
+                        "author": {
+                            "type": "literal",
+                            "value": null
                         }
                     }
                 },
                 {
                     "trellis": "character",
+                    "expansions": ["author", "items"],
                     "map": {
                         "is_alive": {},
                         "type": {},
                         "username": {
                             "type": "reference",
                             "path": "name"
-                        }
-                    },
-                    "expansions": ["items"]
+                        },
+                        "author": {}
+                    }
                 }
             ],
             "sorts": [
                 {
                     "property": "username"
                 }
-            ]
+            ],
+            "pager": {
+                "limit": 7
+            }
         };
 
         return Irrigation.query(query, fixture.users['cj'], ground, lab.vineyard).then(function (response) {
@@ -296,11 +304,13 @@ lab.test("Query test", {
             var objects = response.objects;
             console.log('response', response);
             var user = objects[0];
-            assert.equals(objects.length, 9);
+            assert.equals(response.total, 8);
+            assert.equals(objects.length, 7);
             assert.equals(objects[0].username, 'Adelle');
+            assert.equals(typeof objects[0].author, 'object');
             assert.equals(objects[6].items.length, 2);
             assert.equals(objects[1].username, 'anonymous');
-            assert.equals(objects[8].username, 'The Raven');
+            assert.equals(objects[6].username, 'James');
             console.log('items', objects[6].items);
         });
     }
