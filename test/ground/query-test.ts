@@ -240,7 +240,7 @@ lab.test("Query test", {
         assert.equals(objects.length, 1)
       })
   },
-  "=>map and union": function () {
+  "map and union": function () {
     var query = {
       "trellis": "user",
       "map": {

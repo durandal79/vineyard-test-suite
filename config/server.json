@@ -58,6 +58,9 @@
           "suggestions": true
         }
       }
+    },
+    "exile": {
+      "path": "node_modules/vineyard-potpourri/bulbs/exile"
     }
   }
 }

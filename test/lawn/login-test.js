@@ -4,7 +4,6 @@ var assert = buster.referee.assert;
 require('when/monitor/console');
 var when = require("when");
 var plantlab = require('vineyard-plantlab');
-process.chdir('..');
 var lab = new plantlab('config/server.json', ['lawn', 'fortress']);
 var ground = lab.ground;
 var Fixture = require('../Fixture.js');
@@ -14,16 +13,17 @@ var pipeline = require('when/pipeline');
 lab.test("Notification test", {
     setUp: function () {
         this.timeout = 10000;
-        lab.start();
+        console.log('starting notification test');
         return fixture.prepare_database().then(function () {
+            return lab.start();
+        }).then(function () {
             return fixture.populate();
         });
     },
     tearDown: function () {
-        if (lab)
-            lab.stop();
+        return lab.stop();
     },
-    "=> photo notifications": function () {
+    "photo notifications": function () {
         var socket;
         var update = {
             objects: [

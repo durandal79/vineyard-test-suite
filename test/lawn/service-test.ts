@@ -15,8 +15,9 @@ var Irrigation = Lawn.Irrigation
 
 import Ground = require('vineyard-ground')
 
-lab.test("Query test", {
+lab.test("Service test", {
   setUp: function () {
+    console.log('starting service test')
     this.timeout = 10000;
     return fixture.prepare_database()
       .then(()=> lab.start())
@@ -27,7 +28,7 @@ lab.test("Query test", {
     console.log('stopping')
     return lab.stop()
   },
-  "=>http query": function () {
+  "http query": function () {
     var login, query = {
       "trellis": "character"
     }

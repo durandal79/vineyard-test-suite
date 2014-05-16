@@ -18,6 +18,7 @@ module.exports = function (grunt) {
           'node_modules/vineyard-fortress/Gruntfile.js',
           'node_modules/vineyard-plantlab/Gruntfile.js',
           'node_modules/vineyard-solr/Gruntfile.js',
+          'node_modules/vineyard-potpourri/Gruntfile.js',
           'Gruntfile-Test.js'
         ],
         tasks: [ 'watch' ]
