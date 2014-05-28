@@ -3,6 +3,7 @@
 var buster = require("buster");
 var assert = buster.referee.assert;
 var when = require("when")
+var pipeline = require('when/pipeline')
 import PlantLab = require('vineyard-plantlab')
 var lab = new PlantLab('config/server.json', ['lawn', 'fortress'])
 var ground = lab.ground
@@ -12,7 +13,6 @@ ground.log_queries = true
 
 var Lawn = require('vineyard-lawn')
 var Irrigation = Lawn.Irrigation
-
 import Ground = require('vineyard-ground')
 
 lab.test("Query test", {
@@ -326,7 +326,7 @@ lab.test("Query test", {
       .then(()=> Irrigation.query(query2, fixture.users['cj'], ground, lab.vineyard))
       .then((response) => {
         var objects = response.objects
-        console.log('response', response)
+//        console.log('response', response)
         var user = objects[0]
         assert.equals(response.total, 8)
         assert.equals(objects.length, 7)
@@ -336,6 +336,81 @@ lab.test("Query test", {
         assert.equals(objects[1].username, 'anonymous')
         assert.equals(objects[6].username, 'James')
         console.log('items', objects[6].items)
+      })
+  },
+  "sorts": function () {
+    var query = {
+      "trellis": "item",
+      "filters": [
+        {
+          "path": "owner.name",
+          "operator": "LIKE",
+          "value": "a"
+        }
+      ],
+      "sorts": [
+        {
+          "path": "owner.name"
+        },
+        {
+          "path": "name"
+        }
+      ]
+    }
+    var query2 = {
+      "trellis": "item",
+      "sorts": [
+        {
+          "path": "owner.name"
+        },
+        {
+          "path": "name"
+        }
+      ]
+    }
+
+    return Irrigation.query(query, fixture.users['cj'], ground, lab.vineyard)
+      .then((response) => {
+        var objects = response.objects
+//        console.log('response', response)
+        assert.equals(objects.length, 3)
+        assert.equals(objects[0].name, 'crown')
+        assert.equals(objects[1].name, "book of fairytales")
+        assert.equals(objects[2].name, "knife")
+      })
+      .then(()=> Irrigation.query(query2, fixture.users['cj'], ground, lab.vineyard))
+      .then((response) => {
+        var objects = response.objects
+        console.log('response', response)
+        assert.equals(objects.length, 4)
+        assert.equals(objects[0].name, 'crown')
+        assert.equals(objects[1].name, 'shotgun')
+        assert.equals(objects[2].name, "book of fairytales")
+        assert.equals(objects[3].name, "knife")
+      })
+  },
+  "null": function () {
+    var query = {
+      "trellis": "character",
+      "filters": [
+        {
+          "path": "name",
+          "operator": "!=",
+          "value": null
+        }
+      ],
+      "sorts": [
+        {
+          "path": "name"
+        }
+      ]
+    }
+
+    return Irrigation.query(query, fixture.users['cj'], ground, lab.vineyard)
+      .then((response) => {
+        var objects = response.objects
+        console.log('response', response)
+        assert.greater(objects.length, 2)
       })
   }
 })

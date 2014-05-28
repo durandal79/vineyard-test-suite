@@ -68,9 +68,13 @@ var Fixture = (function (_super) {
         inserts.push(this.insert_object('role', { id: 2, name: "member" }));
         inserts.push(this.add_role('froggy', member));
         inserts.push(this.add_role('hero', member));
-        inserts.push(this.ground.db.query("INSERT INTO user_follows (follower, followee) VALUES (9, 7)"));
 
-        return when.all(inserts);
+        return when.all(inserts).then(function () {
+            return _this.ground.update_object('user', {
+                id: 9,
+                followees: [7]
+            });
+        });
     };
 
     Fixture.prototype.add_role = function (user_name, role) {

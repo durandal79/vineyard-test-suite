@@ -74,6 +74,20 @@
           "type": "list",
           "trellis": "user",
           "other_property": "followers"
+        },
+        "characters": {
+          "type": "list",
+          "trellis": "character",
+          "other_property": "author"
+        },
+        "follower_count": {
+          "type": "int"
+        },
+        "character_count": {
+          "type": "int"
+        },
+        "multi_count": {
+          "type": "int"
         }
       }
     },
@@ -102,6 +116,9 @@
         "author": {
           "type": "reference",
           "trellis": "user"
+        },
+        "item_count": {
+          "type": "int"
         }
       }
     },
@@ -157,5 +174,79 @@
         }
       }
     }
-  }
+  },
+  "logic": [
+    {
+      "type": "constraint",
+      "trellis": "character",
+      "property": "item_count",
+      "expression": {
+        "type": "function",
+        "name": "count",
+        "arguments": [
+          {
+            "type": "reference",
+            "path": "items"
+          }
+        ]
+      }
+    },
+    {
+      "type": "symbol",
+      "name": "follower_count",
+      "expression": {
+        "type": "constraint",
+        "trellis": "user",
+        "property": "follower_count",
+        "expression": {
+          "type": "function",
+          "name": "count",
+          "arguments": [
+            {
+              "type": "reference",
+              "path": "followers"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "symbol",
+      "name": "character_count",
+      "expression": {
+        "type": "constraint",
+        "trellis": "user",
+        "property": "character_count",
+        "expression": {
+          "type": "function",
+          "name": "count",
+          "arguments": [
+            {
+              "type": "reference",
+              "path": "characters"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "constraint",
+      "trellis": "user",
+      "property": "multi_count",
+      "expression": {
+        "type": "function",
+        "name": "sum",
+        "arguments": [
+          {
+            "type": "reference",
+            "path": "character_count"
+          },
+          {
+            "type": "reference",
+            "path": "follower_count"
+          }
+        ]
+      }
+    }
+  ]
 }

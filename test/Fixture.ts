@@ -59,11 +59,13 @@ export class Fixture extends PlantLab.Fixture {
     inserts.push(this.insert_object('role', {id: 2, name: "member"}))
     inserts.push(this.add_role('froggy', member))
     inserts.push(this.add_role('hero', member))
-    inserts.push(this.ground.db.query("INSERT INTO user_follows (follower, followee) VALUES (9, 7)"))
-//    inserts.push(this.ground.db.query("INSERT INTO roles_users (role, user) VALUES (2, 12)"))
-//    inserts.push(this.ground.db.query("INSERT INTO roles_users (role, user) VALUES (2, 9)"))
+//    inserts.push(this.ground.db.query("INSERT INTO user_follows (follower, followee) VALUES (9, 7)"))
 
     return when.all(inserts)
+      .then(()=> this.ground.update_object('user', {
+        id: 9,
+        followees: [ 7 ]
+      }))
   }
 
   add_role(user_name, role):Promise {

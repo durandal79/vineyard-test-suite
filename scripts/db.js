@@ -1,5 +1,5 @@
 var when = require("when")
-var PlantLab = require('plantlab')
+var PlantLab = require('vineyard-plantlab')
 var Fixture = require('./../test/Fixture.js')
 
 process.chdir('E:/websites/vineyard')

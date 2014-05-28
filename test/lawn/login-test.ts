@@ -46,4 +46,21 @@ lab.test("Notification test", {
       }
     ])
   }
+//  ,
+//  "=>registration": function () {
+//    var data = {
+//      name: 'cj',
+//      pass: ''
+//    }
+//    return pipeline([
+//
+//      ()=> lab.post('cj', 'pass'),
+//      (s) => socket = s,
+//      ()=> lab.emit(socket, 'room/join', 'event/7E6FB110-9B43-11E3-895F-CB7A0150F761'),
+//      ()=> {
+//        assert(true)
+//        return lab.emit(socket, 'update', update)
+//      }
+//    ])
+//  }
 })

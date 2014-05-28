@@ -18,7 +18,7 @@ import Ground = require('vineyard-ground')
 
 lab.test("Query test", {
   setUp: function () {
-    this.timeout = 7000;
+    this.timeout = 70000;
 //    this.timeout = 10000;
     return fixture.prepare_database()
       .then(()=> lab.start())
@@ -37,7 +37,7 @@ lab.test("Query test", {
           "id": 7,
           "followers": [
             {
-              "id":9,
+              "id": 9,
               "_removed_": true
             }
           ]
@@ -77,16 +77,21 @@ lab.test("Query test", {
           "trellis": "user",
           "id": 9,
           "followers": [ 12 ]
+        },
+        {
+          "trellis": "user",
+          "id": 7,
+          "followees": [ 9 ]
         }
       ]
     }
     var query = {
       "trellis": "user",
-      "expansions": [ "followees" ],
+      "expansions": [ "followers" ],
       "filters": [
         {
           "path": "id",
-          "value": 12
+          "value": 9
         }
       ]
     }
@@ -99,11 +104,132 @@ lab.test("Query test", {
       ()=> lab.emit(socket, 'query', query)
         .then((response) => {
           var objects = response.objects
-//          console.log('response', response)
+          console.log('response', response)
           assert.equals(objects.length, 1)
-          assert.equals(objects[0].followees.length, 1)
-          assert.equals(objects[0].followees[0].name, "froggy")
+          assert.equals(objects[0].followers.length, 2)
+          assert.equals(objects[0].followers[1].name, "hero")
+          assert.equals(objects[0].follower_count, 2)
         })
+    ])
+  },
+  "counts": function () {
+    var query = {
+      "trellis": "character",
+      "filters": [
+        {
+          "path": "name",
+          "value": "James"
+        }
+      ]
+    }
+
+    var update1 = {
+      "objects": [
+        {
+          "trellis": "item",
+          "id": 25,
+          "owner": 1,
+          "name": "syringe"
+        }
+      ]
+    }
+
+    var update2 = {
+      "objects": [
+        {
+          "trellis": "item",
+          "id": 25,
+          "_deleted_": true
+        }
+      ]
+    }
+
+    return pipeline([
+      ()=> Irrigation.query(query, fixture.users['cj'], ground, lab.vineyard),
+      (response) => {
+        var objects = response.objects
+        console.log('response', response)
+        assert.equals(objects[0].item_count, 2)
+      },
+      ()=> Irrigation.update(update1, fixture.users['cj'], ground, lab.vineyard),
+      ()=> Irrigation.query(query, fixture.users['cj'], ground, lab.vineyard),
+      (response) => {
+        var objects = response.objects
+        console.log('response', response)
+        assert.equals(objects[0].item_count, 3)
+      },
+      ()=> Irrigation.update(update2, fixture.users['cj'], ground, lab.vineyard),
+      ()=> Irrigation.query(query, fixture.users['cj'], ground, lab.vineyard),
+      (response) => {
+        var objects = response.objects
+        console.log('response', response)
+        assert.equals(objects[0].item_count, 2, 'Deleting item updated item count.')
+      }
+    ])
+  },
+  "=>join counts": function () {
+    var query = {
+      "trellis": "user",
+      "filters": [
+        {
+          "path": "name",
+          "value": "cj"
+        }
+      ]
+    }
+
+    var update1 = {
+      "objects": [
+        {
+          "trellis": "user",
+          id: 12,
+          followees: [ 7 ]
+        }
+      ]
+    }
+
+    var update2 = {
+      "objects": [
+        {
+          "trellis": "user",
+          id: 12,
+          followees: [
+            {
+              id: 7,
+              _removed_: true
+            }
+          ]
+        }
+      ]
+    }
+
+    return pipeline([
+      ()=> Irrigation.query(query, fixture.users['cj'], ground, lab.vineyard),
+      (response) => {
+        var objects = response.objects
+        console.log('response', response)
+        assert.equals(objects[0].follower_count, 1)
+        assert.equals(objects[0].character_count, 3)
+        assert.equals(objects[0].multi_count, 4)
+      },
+      ()=> Irrigation.update(update1, fixture.users['cj'], ground, lab.vineyard),
+      ()=> Irrigation.query(query, fixture.users['cj'], ground, lab.vineyard),
+      (response) => {
+        var objects = response.objects
+        console.log('response', response)
+        assert.equals(objects[0].follower_count, 2)
+        assert.equals(objects[0].character_count, 3)
+        assert.equals(objects[0].multi_count, 5)
+      },
+      ()=> Irrigation.update(update2, fixture.users['cj'], ground, lab.vineyard),
+      ()=> Irrigation.query(query, fixture.users['cj'], ground, lab.vineyard),
+      (response) => {
+        var objects = response.objects
+        console.log('response', response)
+        assert.equals(objects[0].follower_count, 1)
+        assert.equals(objects[0].character_count, 3)
+        assert.equals(objects[0].multi_count, 4)
+      }
     ])
   }
 })
