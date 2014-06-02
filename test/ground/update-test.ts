@@ -167,7 +167,7 @@ lab.test("Query test", {
       }
     ])
   },
-  "=>join counts": function () {
+  "join counts": function () {
     var query = {
       "trellis": "user",
       "filters": [
