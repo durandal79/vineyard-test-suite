@@ -17,7 +17,7 @@
   },
   "bulbs": {
     "fortress": {
-      "config_path": "config/fortress.json"
+      "config_path": "config/fortress2.json"
     },
     "lawn": {
       "cookie_secret": "lawn1234",

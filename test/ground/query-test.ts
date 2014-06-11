@@ -412,5 +412,25 @@ lab.test("Query test", {
         console.log('response', response)
         assert.greater(objects.length, 2)
       })
-  }
+  },
+  "subclasses": function () {
+    var query = {
+      "trellis": "object",
+      "sorts": [
+        {
+          "path": "name"
+        }
+      ]
+    }
+
+    return Irrigation.query(query, fixture.users['cj'], ground, lab.vineyard)
+      .then((response) => {
+        var objects = response.objects
+        console.log('response', response)
+        assert.greater(objects.length, 2)
+        assert.same(objects[0].is_alive, true)
+        assert.same(objects[1].owner, 1)
+
+      })
+  },
 })

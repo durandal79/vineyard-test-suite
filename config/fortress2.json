@@ -1,0 +1,19 @@
+{
+  "gates": [
+    {
+      "type": "global",
+      "roles": [ "admin" ],
+      "actions": [ "*" ],
+      "resources": [ "*" ]
+    },
+    {
+      "type": "global",
+      "roles": [ "member" ],
+      "actions": [ "update", "query" ],
+      "resources": {
+        "character": [ "name", "description" ],
+        "item": [ "*" ]
+      }
+    }
+  ]
+}
