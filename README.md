@@ -4,7 +4,7 @@ A project for developing and testing the main Vineyard framework and bulbs (modu
 
 ## Installation ##
 
-1. Clone https://github.com/silentorb/vineyard-test-suite
+1. Clone https://github.com/silentorb/vineyard-test-suite or a fork.
 2. (Optional) Rename the `vineyard-test-suite` folder to `vineyard`
 3. Run `npm install` inside the vineyard folder.  That will create a node_modules folder.
 4. Inside the new node_modules folder, clone at least the following repositories or forks:
